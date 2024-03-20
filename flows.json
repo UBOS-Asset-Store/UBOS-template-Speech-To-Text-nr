@@ -1,0 +1,580 @@
+[
+    {
+        "id": "1bf0d6b2752b2635",
+        "type": "tab",
+        "label": "speech-to-text",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "5d5bc619fee825b0",
+        "type": "http request",
+        "z": "1bf0d6b2752b2635",
+        "name": "",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 510,
+        "y": 240,
+        "wires": [
+            [
+                "1baf6c3cbd23b52e"
+            ]
+        ]
+    },
+    {
+        "id": "ede1e6ca4e1a9683",
+        "type": "function",
+        "z": "1bf0d6b2752b2635",
+        "name": "check type",
+        "func": "msg.old = msg.payload;\n\nif (msg.payload.type === 'url') {\n    msg.payload = msg.old.url;\n    msg.path = \"/video/\";\n    msg.audioonly = \"true\";\n\n    return [msg, null];\n} else {\n    msg.url = `https://api.openai.com/v1/audio/transcriptions`;\n    msg.method = \"POST\";\n    msg.token = msg.old.key;\n\n    msg.headers = {\n        \"Content-Type\": \"multipart/form-data\",\n        \"Authorization\": `Bearer ${msg.token}`,\n        \"Connection\": \"Keep-Alive\",\n        \"Transfer-Encoding\": \"chunked\",\n    };\n    msg.buffer = msg.req.files[0].buffer;\n    msg.filename = msg.req.files[0].originalname;\n    msg.payload = {\n\n        model: 'whisper-1',\n        \"language\": msg.old.lan,\n        'temperature': 0.2,\n        \"file\": {\n            \"value\": msg.req.files[0].buffer,\n            \"options\": {\n                \"filename\": msg.req.files[0].originalname,\n            },\n        },\n\n    };\n\n    return [null, msg];\n};\n",
+        "outputs": 2,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 310,
+        "y": 200,
+        "wires": [
+            [
+                "a66789c0abb53019",
+                "93ce823f89d3dec3"
+            ],
+            [
+                "5d5bc619fee825b0"
+            ]
+        ]
+    },
+    {
+        "id": "79e206c1a489a88a",
+        "type": "file in",
+        "z": "1bf0d6b2752b2635",
+        "name": "",
+        "filename": "filename",
+        "filenameType": "msg",
+        "format": "",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 900,
+        "y": 160,
+        "wires": [
+            [
+                "1c248afb52887b38",
+                "6db5d8595ec0b0c5"
+            ]
+        ]
+    },
+    {
+        "id": "1c248afb52887b38",
+        "type": "function",
+        "z": "1bf0d6b2752b2635",
+        "name": "Open AI Request",
+        "func": "msg.buffer = msg.payload;\n\nmsg.url = `https://api.openai.com/v1/audio/transcriptions`;\nmsg.method = \"POST\";\nmsg.token = msg.old.key;\nmsg.headers = {\n    \"Content-Type\": \"multipart/form-data\",\n    \"Authorization\": `Bearer ${msg.token}`,\n    \"Connection\": \"Keep-Alive\",\n    \"Transfer-Encoding\": \"chunked\",\n};\n\nmsg.payload = {\n    model: 'whisper-1',\n    \"response-format\": \"text\",\n    'temperature': 0.2,\n    \"language\": msg.payload.lan,\n    \"file\": {\n        \"value\": msg.buffer,\n        \"options\": {\n            \"filename\": msg.filename,\n        },\n    },\n\n};\n\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1070,
+        "y": 160,
+        "wires": [
+            [
+                "f8014b7ee1385d2b",
+                "6db5d8595ec0b0c5"
+            ]
+        ]
+    },
+    {
+        "id": "f8014b7ee1385d2b",
+        "type": "http request",
+        "z": "1bf0d6b2752b2635",
+        "name": "",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 1250,
+        "y": 160,
+        "wires": [
+            [
+                "470e85dae371e0df"
+            ]
+        ]
+    },
+    {
+        "id": "5834e2714ff34a91",
+        "type": "function",
+        "z": "1bf0d6b2752b2635",
+        "name": "setup filename",
+        "func": "msg.filename = msg.file;\n\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 740,
+        "y": 160,
+        "wires": [
+            [
+                "79e206c1a489a88a"
+            ]
+        ]
+    },
+    {
+        "id": "6cb57d026254cae2",
+        "type": "http in",
+        "z": "1bf0d6b2752b2635",
+        "name": "",
+        "url": "/convertSpeech",
+        "method": "post",
+        "upload": true,
+        "swaggerDoc": "",
+        "x": 120,
+        "y": 200,
+        "wires": [
+            [
+                "07245a855ecb1e42",
+                "ede1e6ca4e1a9683"
+            ]
+        ]
+    },
+    {
+        "id": "7328494e428a55a5",
+        "type": "http response",
+        "z": "1bf0d6b2752b2635",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 1550,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "a978efee1003b60e",
+        "type": "function",
+        "z": "1bf0d6b2752b2635",
+        "name": "Open AI Request",
+        "func": "msg.old = msg.payload;\n\nmsg.url = `https://api.openai.com/v1/chat/completions`;\nmsg.method = \"POST\";\nmsg.token = msg.old.key;\n\nmsg.headers = {\n    \"Content-Type\": \"application/json\",\n    \"Authorization\": `Bearer ${msg.token}`\n}\n\nmsg.payload = {\n    \"model\": \"gpt-3.5-turbo-0125\",\n    \"messages\": [\n        {\n            role: \"system\",\n            content: \"act as a text analyst\",\n        },\n        {\n            role: \"user\", content: `\n            Act as a professional sales manager. Your job is to analyze cold calls. You work in a real estate industry.\n            In each of your report, add a list of bullets. The repost should be short but helpful, as result it should help improve the next calls.\n            Below I will provide a call transcription and focused request what should be analyzed. Based on that data give me a detailed report of the cold call.\n            Give me result in Arabic language.\n            Call transcription:  ${msg.old.data}\n            Focused request: ${msg.old.prompt}`\n        },\n    ]\n}\n// msg.payload = {\n//     \"model\": \"gpt-3.5-turbo-0613\",\n//     \"messages\": [\n//         {\n//             role: \"system\",\n//             content: \"act as a text analyst\",\n//         },\n//         {\n//             role: \"user\", content: `\n//            ${msg.old.data}\n//             My text: ${msg.old.prompt}`\n//         },\n//     ]\n// }\nreturn msg;\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 330,
+        "y": 360,
+        "wires": [
+            [
+                "d7c2cfb355a1e19e",
+                "625358e6144cdc01"
+            ]
+        ]
+    },
+    {
+        "id": "e38d306dcd4b2c1e",
+        "type": "http in",
+        "z": "1bf0d6b2752b2635",
+        "name": "",
+        "url": "/conclusions",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 110,
+        "y": 360,
+        "wires": [
+            [
+                "9b8e07afaba98ca7",
+                "a978efee1003b60e"
+            ]
+        ]
+    },
+    {
+        "id": "d7c2cfb355a1e19e",
+        "type": "http request",
+        "z": "1bf0d6b2752b2635",
+        "name": "",
+        "method": "use",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 520,
+        "y": 360,
+        "wires": [
+            [
+                "a09a19cff3df794d",
+                "af6f3f48ca681a1e"
+            ]
+        ]
+    },
+    {
+        "id": "4238e1e968238af1",
+        "type": "http response",
+        "z": "1bf0d6b2752b2635",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 840,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "1baf6c3cbd23b52e",
+        "type": "function",
+        "z": "1bf0d6b2752b2635",
+        "name": "response",
+        "func": "if (msg.statusCode === 200) {\n    msg.payload = {\n        text: msg.payload.text,\n        statusCode: msg.statusCode,\n    };\n}\n\nelse {\n    msg.payload = {\n        text: msg.payload.error.message,\n        statusCode: 401,\n    };\n    msg.statusCode = 200;\n}\n\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 680,
+        "y": 240,
+        "wires": [
+            [
+                "403fe5f7c054424d",
+                "672c31390cf8d2dd"
+            ]
+        ]
+    },
+    {
+        "id": "403fe5f7c054424d",
+        "type": "http response",
+        "z": "1bf0d6b2752b2635",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 840,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "a09a19cff3df794d",
+        "type": "function",
+        "z": "1bf0d6b2752b2635",
+        "name": "response",
+        "func": "if (msg.statusCode === 200) {\n    msg.payload = msg.payload.choices[0].message.content;\n\n} else {\n    msg.payload = msg.payload.error.message;\n    msg.statusCode = 200;\n};\n\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 690,
+        "y": 360,
+        "wires": [
+            [
+                "4238e1e968238af1",
+                "af6f3f48ca681a1e"
+            ]
+        ]
+    },
+    {
+        "id": "470e85dae371e0df",
+        "type": "function",
+        "z": "1bf0d6b2752b2635",
+        "name": "response",
+        "func": "if(msg.statusCode === 200){\n    msg.payload = {\n        text: msg.payload.text,\n        statusCode: msg.statusCode\n    }\n}\n    else{\n    msg.payload = {\n        text: msg.payload.error.message,\n        statusCode: 401\n    }\n    msg.statusCode = 200\n}\n    \nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1400,
+        "y": 160,
+        "wires": [
+            [
+                "7328494e428a55a5",
+                "4bd1833a95928eb4"
+            ]
+        ]
+    },
+    {
+        "id": "16cccf52e50515a2",
+        "type": "template",
+        "z": "1bf0d6b2752b2635",
+        "name": "",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "css",
+        "syntax": "mustache",
+        "template": ".gridWrap{\n    right: 0px !important;\n    top: 0px !important;\n    min-height: 100vh !important;\n    height: fit-content !important;\n    width: 100vw;\n    padding: 4px 0px !important;\n    \n}\n.gridWrap>div>div>div>div>div>div>div>div>div>div>div>div>div{\n    display: flex !important;\n    justify-content: space-around !important;\n    flex-direction: column !important;\n    align-items: center !important;\n    gap: 15px !important;\n}\n.gridWrap>div>div>div>div>div>div>div>div>div>div{\n    height: inherit !important;\n}\n\n.bp3-input, .select-button {\n    height: 55px !important;\n    border-radius: 5px !important;\n    border: 2px solid #F39100 !important;\n}\n.gridWrap .input input.bp3-input:focus:focus {\n    border: 2px solid #F39100 !important;\n    box-shadow: rgb(254 223 192) 0px 0px 0px 2px !important;\n}\n.iframe{\n    height: 55px !important;\n    padding: 0 !important;\n    padding-right: 4px !important;  \n}\n.iframe iframe{\n    border-radius: 5px !important;\n}\n.text>div>div>div>div>div{\n   border-radius: 5px !important; \n}\n.secondary_container, .bgimage{\n    /* left: 50% !important;\n    transform: translateX(-50%) !important; */\n    margin: 0 auto !important;\n    position: static !important;\n}\n.label{\n    /* top: 346px !important; */\n    height: 48px !important;\n    padding: 0 !important;\n    padding-left: 4px !important;\n}\n.run_btn{\n    padding: 0 !important;\n    height: 55px !important;\n}\nlabel.uploadBtn:hover{\n    background: rgb(158, 200, 250) !important;\n}\n.bp3-input-action{\n    position: absolute !important;\n    top: 50% !important;\n    transform: translateY(-50%) !important;\n}\n.text>div>div>div>div>div>div>div{\n    padding: 4px !important;\n}\n\n.input .bp3-popover-target {\n    height: inherit !important;\n}",
+        "output": "str",
+        "x": 240,
+        "y": 60,
+        "wires": [
+            [
+                "f97147e49c8cba44"
+            ]
+        ]
+    },
+    {
+        "id": "9a07560ef518aa95",
+        "type": "http in",
+        "z": "1bf0d6b2752b2635",
+        "name": "",
+        "url": "/style",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 80,
+        "y": 60,
+        "wires": [
+            [
+                "16cccf52e50515a2"
+            ]
+        ]
+    },
+    {
+        "id": "f97147e49c8cba44",
+        "type": "http response",
+        "z": "1bf0d6b2752b2635",
+        "name": "",
+        "statusCode": "",
+        "headers": {
+            "content-type": "text/css"
+        },
+        "x": 390,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "672c31390cf8d2dd",
+        "type": "debug",
+        "z": "1bf0d6b2752b2635",
+        "name": "debug 13",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 720,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "4bd1833a95928eb4",
+        "type": "debug",
+        "z": "1bf0d6b2752b2635",
+        "name": "debug 14",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1440,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "af6f3f48ca681a1e",
+        "type": "debug",
+        "z": "1bf0d6b2752b2635",
+        "name": "debug 15",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 620,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "f20880961662ca64",
+        "type": "inject",
+        "z": "1bf0d6b2752b2635",
+        "name": "make folder",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "30",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 480,
+        "wires": [
+            [
+                "6b7df739cb6f9b1c"
+            ]
+        ]
+    },
+    {
+        "id": "6b7df739cb6f9b1c",
+        "type": "function",
+        "z": "1bf0d6b2752b2635",
+        "name": "folder content",
+        "func": "msg.payload = 'welcome';\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 480,
+        "wires": [
+            [
+                "1765b817c7e30233"
+            ]
+        ]
+    },
+    {
+        "id": "1765b817c7e30233",
+        "type": "file",
+        "z": "1bf0d6b2752b2635",
+        "name": "",
+        "filename": "/video/welcome.txt",
+        "filenameType": "str",
+        "appendNewline": true,
+        "createDir": true,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 530,
+        "y": 480,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9b8e07afaba98ca7",
+        "type": "debug",
+        "z": "1bf0d6b2752b2635",
+        "name": "debug 16",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 140,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "625358e6144cdc01",
+        "type": "debug",
+        "z": "1bf0d6b2752b2635",
+        "name": "debug 17",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 360,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "a66789c0abb53019",
+        "type": "youtube-ytdl",
+        "z": "1bf0d6b2752b2635",
+        "name": "",
+        "url": "payload",
+        "urlType": "msg",
+        "path": "path",
+        "pathType": "msg",
+        "x": 530,
+        "y": 160,
+        "wires": [
+            [
+                "5834e2714ff34a91",
+                "93ce823f89d3dec3"
+            ]
+        ]
+    },
+    {
+        "id": "6db5d8595ec0b0c5",
+        "type": "debug",
+        "z": "1bf0d6b2752b2635",
+        "name": "debug 18",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1000,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "07245a855ecb1e42",
+        "type": "debug",
+        "z": "1bf0d6b2752b2635",
+        "name": "debug 19",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 160,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "93ce823f89d3dec3",
+        "type": "debug",
+        "z": "1bf0d6b2752b2635",
+        "name": "debug 20",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 480,
+        "y": 120,
+        "wires": []
+    }
+]
