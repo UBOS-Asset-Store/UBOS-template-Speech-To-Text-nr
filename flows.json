@@ -46,8 +46,7 @@
         "y": 200,
         "wires": [
             [
-                "a66789c0abb53019",
-                "93ce823f89d3dec3"
+                "a66789c0abb53019"
             ],
             [
                 "5d5bc619fee825b0"
@@ -70,8 +69,7 @@
         "y": 160,
         "wires": [
             [
-                "1c248afb52887b38",
-                "6db5d8595ec0b0c5"
+                "1c248afb52887b38"
             ]
         ]
     },
@@ -90,8 +88,7 @@
         "y": 160,
         "wires": [
             [
-                "f8014b7ee1385d2b",
-                "6db5d8595ec0b0c5"
+                "f8014b7ee1385d2b"
             ]
         ]
     },
@@ -151,7 +148,6 @@
         "y": 200,
         "wires": [
             [
-                "07245a855ecb1e42",
                 "ede1e6ca4e1a9683"
             ]
         ]
@@ -172,7 +168,7 @@
         "type": "function",
         "z": "1bf0d6b2752b2635",
         "name": "Open AI Request",
-        "func": "msg.old = msg.payload;\n\nmsg.url = `https://api.openai.com/v1/chat/completions`;\nmsg.method = \"POST\";\nmsg.token = msg.old.key;\n\nmsg.headers = {\n    \"Content-Type\": \"application/json\",\n    \"Authorization\": `Bearer ${msg.token}`\n}\n\nmsg.payload = {\n    \"model\": \"gpt-3.5-turbo-0125\",\n    \"messages\": [\n        {\n            role: \"system\",\n            content: \"act as a text analyst\",\n        },\n        {\n            role: \"user\", content: `\n            Act as a professional sales manager. Your job is to analyze cold calls. You work in a real estate industry.\n            In each of your report, add a list of bullets. The repost should be short but helpful, as result it should help improve the next calls.\n            Below I will provide a call transcription and focused request what should be analyzed. Based on that data give me a detailed report of the cold call.\n            Give me result in Arabic language.\n            Call transcription:  ${msg.old.data}\n            Focused request: ${msg.old.prompt}`\n        },\n    ]\n}\n// msg.payload = {\n//     \"model\": \"gpt-3.5-turbo-0613\",\n//     \"messages\": [\n//         {\n//             role: \"system\",\n//             content: \"act as a text analyst\",\n//         },\n//         {\n//             role: \"user\", content: `\n//            ${msg.old.data}\n//             My text: ${msg.old.prompt}`\n//         },\n//     ]\n// }\nreturn msg;\n\n",
+        "func": "msg.old = msg.payload;\n\nmsg.url = `https://api.openai.com/v1/chat/completions`;\nmsg.method = \"POST\";\nmsg.token = msg.old.key;\n\nmsg.headers = {\n    \"Content-Type\": \"application/json\",\n    \"Authorization\": `Bearer ${msg.token}`\n}\n\nmsg.payload = {\n    \"model\": \"gpt-3.5-turbo-0125\",\n    \"messages\": [\n        {\n            role: \"system\",\n            content: \"act as a text analyst\",\n        },\n        {\n            role: \"user\", content: `\n           My text: ${msg.old.data}\n             ${msg.old.prompt}`\n        },\n    ]\n}\nreturn msg;\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -182,8 +178,7 @@
         "y": 360,
         "wires": [
             [
-                "d7c2cfb355a1e19e",
-                "625358e6144cdc01"
+                "d7c2cfb355a1e19e"
             ]
         ]
     },
@@ -200,7 +195,6 @@
         "y": 360,
         "wires": [
             [
-                "9b8e07afaba98ca7",
                 "a978efee1003b60e"
             ]
         ]
@@ -225,8 +219,7 @@
         "y": 360,
         "wires": [
             [
-                "a09a19cff3df794d",
-                "af6f3f48ca681a1e"
+                "a09a19cff3df794d"
             ]
         ]
     },
@@ -256,8 +249,7 @@
         "y": 240,
         "wires": [
             [
-                "403fe5f7c054424d",
-                "672c31390cf8d2dd"
+                "403fe5f7c054424d"
             ]
         ]
     },
@@ -287,8 +279,7 @@
         "y": 360,
         "wires": [
             [
-                "4238e1e968238af1",
-                "af6f3f48ca681a1e"
+                "4238e1e968238af1"
             ]
         ]
     },
@@ -307,8 +298,7 @@
         "y": 160,
         "wires": [
             [
-                "7328494e428a55a5",
-                "4bd1833a95928eb4"
+                "7328494e428a55a5"
             ]
         ]
     },
@@ -359,55 +349,6 @@
         },
         "x": 390,
         "y": 60,
-        "wires": []
-    },
-    {
-        "id": "672c31390cf8d2dd",
-        "type": "debug",
-        "z": "1bf0d6b2752b2635",
-        "name": "debug 13",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 720,
-        "y": 280,
-        "wires": []
-    },
-    {
-        "id": "4bd1833a95928eb4",
-        "type": "debug",
-        "z": "1bf0d6b2752b2635",
-        "name": "debug 14",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1440,
-        "y": 200,
-        "wires": []
-    },
-    {
-        "id": "af6f3f48ca681a1e",
-        "type": "debug",
-        "z": "1bf0d6b2752b2635",
-        "name": "debug 15",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 620,
-        "y": 400,
         "wires": []
     },
     {
@@ -476,40 +417,6 @@
         ]
     },
     {
-        "id": "9b8e07afaba98ca7",
-        "type": "debug",
-        "z": "1bf0d6b2752b2635",
-        "name": "debug 16",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 140,
-        "y": 400,
-        "wires": []
-    },
-    {
-        "id": "625358e6144cdc01",
-        "type": "debug",
-        "z": "1bf0d6b2752b2635",
-        "name": "debug 17",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 360,
-        "y": 400,
-        "wires": []
-    },
-    {
         "id": "a66789c0abb53019",
         "type": "youtube-ytdl",
         "z": "1bf0d6b2752b2635",
@@ -522,59 +429,8 @@
         "y": 160,
         "wires": [
             [
-                "5834e2714ff34a91",
-                "93ce823f89d3dec3"
+                "5834e2714ff34a91"
             ]
         ]
-    },
-    {
-        "id": "6db5d8595ec0b0c5",
-        "type": "debug",
-        "z": "1bf0d6b2752b2635",
-        "name": "debug 18",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1000,
-        "y": 200,
-        "wires": []
-    },
-    {
-        "id": "07245a855ecb1e42",
-        "type": "debug",
-        "z": "1bf0d6b2752b2635",
-        "name": "debug 19",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 160,
-        "y": 240,
-        "wires": []
-    },
-    {
-        "id": "93ce823f89d3dec3",
-        "type": "debug",
-        "z": "1bf0d6b2752b2635",
-        "name": "debug 20",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 460,
-        "y": 120,
-        "wires": []
     }
 ]
